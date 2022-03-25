@@ -209,7 +209,6 @@ $(async () => {
 
     let datos = []
     let data_temp = [];
-    let category_products = []
     for (let i = 0; i < dataOrganized.length; i++) {
       for (let j = 0; j < dataOrganized[i].salesYear.length; j++) {
         if (dataOrganized[i].salesYear[j + 1] != undefined) {
@@ -231,40 +230,13 @@ $(async () => {
         nombre: dataOrganized[i].nombre,
         amount: Math.abs(predict_porcentage)
       })
-      category_products.push({
-        mes: dataOrganized[i].mes,
-        categoria: dataOrganized[i].categoria,
-        amount: Math.abs(predict_porcentage)
-      })
       data_temp = []
     }
 
     datos == "" ? $(".sk-cube-grid").show() : $(".sk-cube-grid").hide();
     valores(datos)
 
-    const month_category = [...category_products.reduce((r, o) => {
-      const key = o.mes + '-' + o.categoria;
-      const item = r.get(key) || Object.assign({}, o, {
-        amount: 0
-      });
-      item.amount += o.amount;
-      return r.set(key, item);
-    }, new Map).values()];
-
-    const total_category = []
-    month_category.reduce(function (res, value) {
-      if (!res[value.categoria]) {
-        res[value.categoria] = {
-          categoria: value.categoria,
-          total: 0,
-        };
-        total_category.push(res[value.categoria]);
-      }
-      res[value.categoria].total += parseInt(value.amount);
-      return res;
-    }, {});
-
-    const total_year = total_category.map(item => item.total).reduce((prev, curr) => prev + curr, 0);
+    const total_year = datos.map(item => item.amount).reduce((prev, curr) => prev + curr, 0);
     const percentage_increment = total_after.map(item => total_year / item.total - 1)
 
     var totalYear = document.getElementById('total_year');
@@ -331,7 +303,7 @@ $(async () => {
           area: 'row',
           sortBySummaryField: 'Total',
         }, {
-          caption: 'Subcategoria',
+          caption: 'Parte',
           dataField: 'parte',
           width: 150,
           area: 'row',
